@@ -12,10 +12,27 @@ jobs:
     strategy:
       matrix:
         include:
-          - image: node
+          - registry: docker.io/library
+            image: node
             tag: 20.15.0-alpine
-          - image: postgres
+          - registry: docker.io/library
+            image: node
+            tag: 20-slim
+          - registry: docker.io/library
+            image: postgres
             tag: 15-alpine
+          - registry: docker.io/library
+            image: ashraf1abdelrasool/saas-gateway
+            tag: sha-8eed986
+          - registry: docker.io/library
+            image: otel/opentelemetry-collector-contrib
+            tag: 0.139.0
+          - registry: docker.io/library
+            image: openzipkin/zipkin
+            tag: 3
+          - registry: gcr.io/distroless
+            image: nodejs20
+            tag: latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -42,10 +59,10 @@ jobs:
           echo "alias=$REGISTRY" >> $GITHUB_OUTPUT
 
       - name: Pull image
-        run: docker pull docker.io/library/${{ matrix.image }}:${{ matrix.tag }}
+        run: docker pull ${{ matrix.registry }}/${{ matrix.image }}:${{ matrix.tag }}
 
       - name: Tag image
-        run: docker tag docker.io/library/${{ matrix.image }}:${{ matrix.tag }} public.ecr.aws/${{ steps.get-alias.outputs.alias }}/${{ matrix.image }}:${{ matrix.tag }}
+        run: docker tag ${{ matrix.registry }}/${{ matrix.image }}:${{ matrix.tag }} public.ecr.aws/${{ steps.get-alias.outputs.alias }}/${{ matrix.image }}:${{ matrix.tag }}
 
       - name: Push image
         run: docker push public.ecr.aws/${{ steps.get-alias.outputs.alias }}/${{ matrix.image }}:${{ matrix.tag }}
