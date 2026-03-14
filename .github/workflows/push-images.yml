@@ -42,4 +42,4 @@ jobs:
         run: docker tag docker.io/library/${{ matrix.image }}:${{ matrix.tag }} public.ecr.aws/cvhome-saas/${{ matrix.image }}:${{ matrix.tag }}
 
       - name: Push image
-        run: docker push public.ecr.aws/YOUR_REGISTRY_ALIAS/${{ matrix.image }}:${{ matrix.tag }}
+        run: docker push public.ecr.aws/cvhome-saas/${{ matrix.image }}:${{ matrix.tag }}
