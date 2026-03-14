@@ -21,13 +21,13 @@ jobs:
           - registry: docker.io/library
             image: postgres
             tag: 15-alpine
-          - registry: docker.io/library
+          - registry: docker.io
             image: ashraf1abdelrasool/saas-gateway
             tag: sha-8eed986
-          - registry: docker.io/library
+          - registry: docker.io
             image: otel/opentelemetry-collector-contrib
             tag: 0.139.0
-          - registry: docker.io/library
+          - registry: docker.io
             image: openzipkin/zipkin
             tag: 3
           - registry: gcr.io/distroless
