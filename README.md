@@ -16,8 +16,10 @@ This repository uses GitHub Actions to pull Docker images from Docker Hub and pu
      - `AWS_SECRET_ACCESS_KEY`: Your AWS secret access key.
    - Ensure the AWS user has permissions for ECR Public operations.
 
-3. **Update the Workflow:**
-   - In `.github/workflows/push-images.yml`, replace `YOUR_REGISTRY_ALIAS` with your actual ECR public registry alias.
+3. **Run the Workflow:**
+   - The workflow automatically detects your ECR public registry alias.
+   - Push to the `main` branch or use the manual trigger in the Actions tab.
+   - The workflow will pull the specified images and push them to your ECR Public registry.
 
 4. **Add More Images:**
    - To add more images, edit the `matrix.include` section in the workflow file.
@@ -26,10 +28,6 @@ This repository uses GitHub Actions to pull Docker images from Docker Hub and pu
      - image: ubuntu
        tag: 20.04
      ```
-
-5. **Run the Workflow:**
-   - Push to the `main` branch or use the manual trigger in the Actions tab.
-   - The workflow will pull the specified images and push them to your ECR Public registry.
 
 ## Current Images
 

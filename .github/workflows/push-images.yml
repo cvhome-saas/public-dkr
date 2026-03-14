@@ -35,11 +35,17 @@ jobs:
         run: |
           aws ecr-public create-repository --repository-name ${{ matrix.image }} --region us-east-1 || true
 
+      - name: Get ECR Public registry alias
+        id: get-alias
+        run: |
+          REGISTRY_ALIAS=$(aws ecr-public describe-registries --region us-east-1 --query 'registries[0].registryAlias' --output text)
+          echo "alias=$REGISTRY_ALIAS" >> $GITHUB_OUTPUT
+
       - name: Pull image
         run: docker pull docker.io/library/${{ matrix.image }}:${{ matrix.tag }}
 
       - name: Tag image
-        run: docker tag docker.io/library/${{ matrix.image }}:${{ matrix.tag }} public.ecr.aws/cvhome-saas/${{ matrix.image }}:${{ matrix.tag }}
+        run: docker tag docker.io/library/${{ matrix.image }}:${{ matrix.tag }} public.ecr.aws/${{ steps.get-alias.outputs.alias }}/${{ matrix.image }}:${{ matrix.tag }}
 
       - name: Push image
-        run: docker push public.ecr.aws/cvhome-saas/${{ matrix.image }}:${{ matrix.tag }}
+        run: docker push public.ecr.aws/${{ steps.get-alias.outputs.alias }}/${{ matrix.image }}:${{ matrix.tag }}
