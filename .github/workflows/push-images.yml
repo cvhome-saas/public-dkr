@@ -38,8 +38,15 @@ jobs:
       - name: Get ECR Public registry alias
         id: get-alias
         run: |
-          REGISTRY_ALIAS=$(aws ecr-public describe-registries --region us-east-1 --query 'registries[0].registryAlias' --output text)
-          echo "alias=$REGISTRY_ALIAS" >> $GITHUB_OUTPUT
+          # Try to get the registry alias; if not set, fallback to the registry ID.
+          # We'll use a bash one-liner to check if the result is "None" or null.
+          REGISTRY=$(aws ecr-public describe-registries --region us-east-1 --query 'registries[0].registryAlias' --output text)
+          if [ "$REGISTRY" == "None" ] || [ -z "$REGISTRY" ]; then
+            REGISTRY=$(aws ecr-public describe-registries --region us-east-1 --query 'registries[0].registryId' --output text)
+          fi
+          # Convert to lowercase to be safe for Docker image tagging.
+          REGISTRY=$(echo "$REGISTRY" | tr '[:upper:]' '[:lower:]')
+          echo "alias=$REGISTRY" >> $GITHUB_OUTPUT
 
       - name: Pull image
         run: docker pull docker.io/library/${{ matrix.image }}:${{ matrix.tag }}
