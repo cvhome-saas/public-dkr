@@ -30,6 +30,12 @@ jobs:
           - registry: docker.io
             image: openzipkin/zipkin
             tag: 3
+          - registry: docker.io
+            image: paketobuildpacks/ubuntu-noble-run-tiny
+            tag: 0.0.67
+          - registry: docker.io
+            image: paketobuildpacks/builder-noble-java-tiny
+            tag: latest
           - registry: gcr.io/distroless
             image: nodejs20
             tag: latest
