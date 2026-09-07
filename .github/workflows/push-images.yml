@@ -6,6 +6,13 @@ on:
       - main
   workflow_dispatch:
 
+# Auth is OIDC through the organisation-level secret AWS_TEMPLATE_PUBLISH_ROLE_ARN, the same role
+# cvhome-platform's publish-bootstrap.yml assumes. Its trust policy must allow this repository's
+# subject (repo:cvhome-saas/public-dkr:*) and its permissions must cover ECR Public (see README).
+permissions:
+  contents: read
+  id-token: write
+
 jobs:
   push-images:
     runs-on: ubuntu-latest
@@ -43,11 +50,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Configure AWS credentials
+      - name: Configure AWS credentials (OIDC)
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          role-to-assume: ${{ secrets.AWS_TEMPLATE_PUBLISH_ROLE_ARN }}
           aws-region: us-east-1
 
       - name: Login to ECR Public
