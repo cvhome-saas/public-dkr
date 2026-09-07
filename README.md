@@ -9,12 +9,24 @@ This repository uses GitHub Actions to pull Docker images from Docker Hub and pu
    - Create a public registry and choose an alias (e.g., `myregistry`).
    - Note down your registry alias.
 
-2. **Set up AWS Credentials in GitHub Secrets:**
-   - In your GitHub repository, go to Settings > Secrets and variables > Actions.
-   - Add the following secrets:
-     - `AWS_ACCESS_KEY_ID`: Your AWS access key ID.
-     - `AWS_SECRET_ACCESS_KEY`: Your AWS secret access key.
-   - Ensure the AWS user has permissions for ECR Public operations.
+2. **Let GitHub assume the org's publish role (OIDC, no static keys):**
+   - The workflow assumes the role in the **organisation-level** Actions secret `AWS_TEMPLATE_PUBLISH_ROLE_ARN`
+     (shared with cvhome-platform's bootstrap publish). Its trust policy must accept this repository too, and
+     its permissions must include ECR Public. Trust policy shape (the GitHub OIDC provider exists once per
+     account: `token.actions.githubusercontent.com`, audience `sts.amazonaws.com`):
+     ```json
+     {"Version": "2012-10-17", "Statement": [{"Effect": "Allow",
+       "Principal": {"Federated": "arn:aws:iam::<account>:oidc-provider/token.actions.githubusercontent.com"},
+       "Action": "sts:AssumeRoleWithWebIdentity",
+       "Condition": {"StringEquals": {"token.actions.githubusercontent.com:aud": "sts.amazonaws.com"},
+                     "StringLike": {"token.actions.githubusercontent.com:sub": ["repo:cvhome-saas/public-dkr:*", "repo:cvhome-saas/cvhome-platform:*"]}}}]}
+     ```
+   - Attach a policy allowing `ecr-public:GetAuthorizationToken`, `sts:GetServiceBearerToken`,
+     `ecr-public:DescribeRegistries`, `ecr-public:CreateRepository`, `ecr-public:BatchCheckLayerAvailability`,
+     `ecr-public:InitiateLayerUpload`, `ecr-public:UploadLayerPart`, `ecr-public:CompleteLayerUpload`,
+     `ecr-public:PutImage`, `ecr-public:DescribeRepositories` (ECR Public lives in us-east-1).
+   - Nothing to add per repo: the org secret is visible here. Remove this repo's `AWS_ACCESS_KEY_ID` /
+     `AWS_SECRET_ACCESS_KEY` if they exist; nothing reads them any more.
 
 3. **Run the Workflow:**
    - The workflow automatically detects your ECR public registry alias.
