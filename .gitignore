@@ -1,2 +1,4 @@
 # Default ignored files
 /.idea
+.claude/worktrees/
+.DS_Store
