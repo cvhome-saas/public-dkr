@@ -46,6 +46,11 @@ jobs:
           - registry: gcr.io/distroless
             image: nodejs20
             tag: latest
+          # landing-ui's runtime from cvhome-saas/orchestrator .agents/plans/landing-ui-cpu-memory.md:
+          # Node 20 is end-of-life, and the storefront renders a page for 38 % less CPU on 24.
+          - registry: gcr.io/distroless
+            image: nodejs24
+            tag: latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
