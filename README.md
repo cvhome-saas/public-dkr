@@ -43,5 +43,13 @@ This repository uses GitHub Actions to pull Docker images from Docker Hub and pu
 
 ## Current Images
 
-- node:20.15.0-alpine
+The matrix in `.github/workflows/push-images.yml` is the source of truth; each is published as
+`public.ecr.aws/b2i4h4k9/<image>:<tag>`.
+
+- node:20.15.0-alpine, node:20-slim
 - postgres:15-alpine
+- ashraf1abdelrasool/saas-gateway:sha-8eed986
+- otel/opentelemetry-collector-contrib:0.139.0
+- openzipkin/zipkin:3
+- paketobuildpacks/ubuntu-noble-run-tiny:0.0.67, paketobuildpacks/builder-noble-java-tiny:latest
+- gcr.io/distroless/nodejs20:latest, gcr.io/distroless/nodejs24:latest
